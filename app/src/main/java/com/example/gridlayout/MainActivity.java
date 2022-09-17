@@ -21,7 +21,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private static final int COLUMN_COUNT = 8;
-    private int [][] grid = new int[10][8];
+    private final int [][]  grid = new int[10][8];
     private int digCount = 10 * 8 - 4;
     int end = 0;
 
@@ -42,14 +42,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start timer
         if (savedInstanceState != null) {
             clock = savedInstanceState.getInt("clock");
             running = savedInstanceState.getBoolean("running");
         }
-
         runTimer();
-        running = true;
+        running = true; // This determines when stopwatch is running
 
+        // Initialize grid with 0's representing unclicked
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 8; j++) {
                 grid[i][j] = 0;
@@ -138,8 +139,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             // Move onto results page
             Intent intent = new Intent(this, EndActivity.class);
-            String result = "";
-            String message = "";
+            String result, message;
             if (end == 1) {
                 result = "You won.";
                 message = "Good job!";
@@ -216,22 +216,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateWin() {
-        digCount -= 1;
-//        TextView digCountView = (TextView) findViewById(R.id.textView4);
-//        digCountView.setText(String.valueOf(digCount));
-
-        if (digCount == 0) {
-//            Button button = findViewById(R.id.button);
-//            button.setBackgroundColor(Color.GREEN);
+        if (--digCount == 0) {
             end = 1;
             running = false;
         }
     }
 
     public void updateLose() {
-//        Button button = findViewById(R.id.button);
-//        button.setTextColor(Color.GREEN);
-//        button.setBackgroundColor(Color.RED);
         end = -1;
         running = false;
     }
