@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int COLUMN_COUNT = 8;
     private final int [][]  grid = new int[10][8];
+    private final ArrayList<String> mineIDs = new ArrayList<>();
     private int digCount = 10 * 8 - 4;
     int end = 0;
 
@@ -111,10 +112,8 @@ public class MainActivity extends AppCompatActivity {
                         tv.setText("");
                         flagCountView.setText(String.valueOf(flagCount + 1));
                     } else if (tv.getText().equals("")) {
-                        if (flagCount > 0) {
-                            tv.setText(R.string.flag);
-                            flagCountView.setText(String.valueOf(flagCount - 1));
-                        }
+                        tv.setText(R.string.flag);
+                        flagCountView.setText(String.valueOf(flagCount - 1));
                     }
                 }
                 // Pick
@@ -164,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             if (grid[row_random][col_random] == 0) {
                 grid[row_random][col_random] = 1;
                 mines -= 1;
+                mineIDs.add(String.valueOf(row_random) + String.valueOf(col_random));
             }
         }
     }
@@ -219,12 +219,22 @@ public class MainActivity extends AppCompatActivity {
         if (--digCount == 0) {
             end = 1;
             running = false;
+            revealAllMines();
         }
     }
 
     public void updateLose() {
         end = -1;
         running = false;
+        revealAllMines();
+    }
+
+    public void revealAllMines() {
+        for (String str : mineIDs) {
+            int id = Integer.parseInt(str);
+            TextView tv = findViewById(id);
+            tv.setText(R.string.mine);
+        }
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -240,8 +250,15 @@ public class MainActivity extends AppCompatActivity {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                int minutes = (clock%3600) / 60;
                 int seconds = clock%60;
-                String time = String.valueOf(seconds);
+                String time;
+                if (minutes > 0) {
+                    time = String.valueOf(minutes*60 + seconds);
+                }
+                else {
+                    time = String.valueOf(seconds);
+                }
                 timeView.setText(time);
 
                 if (running) {
